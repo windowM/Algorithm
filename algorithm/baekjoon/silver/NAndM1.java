@@ -17,7 +17,7 @@ public class Main {
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
         select = new int[M + 1];
-        used = new int[N+1];
+        used = new int[N+1];    //N크기만큼 만 할당
     }
 
     static void realFunc(int k) throws IOException {
