@@ -1,5 +1,13 @@
 # 알아두면 좋은 함수들
 
+## 🖊️문자
+
+### 문자 대문자 소문자 확인
+```
+Character.isLowerCase(문자);
+Character.isUpperCase(문자);
+```
+
 ## 📮문자열
 
 ### 문자열 -> 문자 배열 변환
@@ -18,6 +26,12 @@ char[] ch = 문자열.toCharArray();
 1. Arrays.asList(문자열 배열).indexOf(타겟값)
 ```
 
+### 문자열 대체 메소드 Replace/ReplaceAll
+```
+1. 문자열.replace(찾는 문자열,변환할 문자열);
+2. 문자열.replaceAll(정규식,대체어)
+```
+![img.png](replace,replaceAll차이.png)
 
 ## 🔢숫자
 
