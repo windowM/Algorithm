@@ -1,25 +1,35 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class P1504 {
 
     // 무방향, 임의로 주어진 두 정점을 반드시 지나야함
 
     static int N, E;
-    static int[][] map;
+//    static int[][] map;
+    static List<Edge>[] list;
+    static boolean[] visit;
+    static int[] dp;
+    static final int INF=200000000;
+    static class Edge{
+        int to,w;
+        Edge(int to,int w){
+            this.to=to;
+            this.w=w;
+        }
+    }
 
     static void input() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         E = Integer.parseInt(st.nextToken());
-        map = new int[N][N];
+        list=new LinkedList[N];
+
         for (int i = 0; i < N; i++) {
-            Arrays.fill(map[i], 200000000);
-            map[i][i] = 0;
+            list[i]=new LinkedList<>();
         }
 
         for (int i = 0; i < E; i++) {
@@ -28,46 +38,52 @@ public class P1504 {
             int b = Integer.parseInt(st.nextToken()) - 1;
             int w = Integer.parseInt(st.nextToken());
 
-            map[a][b] = map[b][a] = w;
+            list[a].add(new Edge(b,w));
+            list[b].add(new Edge(a,w));
         }
 
         st = new StringTokenizer(br.readLine());
         int v1 = Integer.parseInt(st.nextToken()) - 1;
         int v2 = Integer.parseInt(st.nextToken()) - 1;
 
-        floydWarshall();
+        int a=dijkstra(0,v1);
+        int b=dijkstra(v1,v2);
+        int c=dijkstra(v2,N-1);
+        int answer1= a+b+c;
 
-        long result1 = map[0][v1] + map[v1][v2] + map[v2][N - 1];
-        long result2 = map[0][v2] + map[v2][v1] + map[v1][N - 1];
+        a=dijkstra(0,v2);
+        b=dijkstra(v2,v1);
+        c=dijkstra(v1,N-1);
+        int answer2= a+b+c;
 
-        // 이게 무슨 조건이냐
-        if (v1 == 0 || v1 == 0) {
-            if (v1 == N - 1 || v2 == N - 1) {
-                if (map[0][N - 1] >= 200000000) {
-                    System.out.println("-1");
-                } else {
-                    System.out.println(map[0][N - 1]);
-                }
-            }
-        }else if (result1 >= 200000000 || result2 >= 200000000) {
-            System.out.println("-1");
-        } else {
-            System.out.println(Math.min(result1, result2));
+        int answer=Math.min(answer1,answer2);
+        if(answer>=INF){
+            System.out.println(-1);
+        }else{
+            System.out.println(answer);
         }
-
 
     }
 
-    static void floydWarshall() {
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                for (int k = 0; k < N; k++) {
-                    if (map[j][k] > map[j][i] + map[i][k]) {
-                        map[j][k] = map[j][i] + map[i][k];
-                    }
+    static int dijkstra(int start,int end){
+        visit=new boolean[N];
+        dp=new int[N];
+        Arrays.fill(dp,INF);
+        PriorityQueue<int[]> pq =new PriorityQueue<>((a,b)->a[0]-b[0]);
+        pq.offer(new int[]{start,0});
+        visit[start]=true;
+        dp[start]=0;
+        while(!pq.isEmpty()) {
+            int[] arr=pq.poll();
+            for (Edge edge : list[arr[0]]){
+                if(dp[edge.to]>edge.w+arr[1]){
+                    dp[edge.to]=edge.w+arr[1];
+                    pq.offer(new int[]{edge.to,dp[edge.to]});
                 }
             }
         }
+
+        return dp[end];
     }
 
     public static void main(String[] args) throws IOException {
